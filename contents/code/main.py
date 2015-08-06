@@ -5,9 +5,10 @@ import fnmatch
 import os
 import dbus
 from subprocess import call
-from subprocess import check_output
 
-# notify function -> this is a python notify version
+PASSWORD_STORE=os.path.expanduser("~/.password-store/")
+
+# notify function -> this is a python/dbus notify version
 # maybe switch to a proper kde notify version, since
 # this is for kde only anyway
 def notify(summary, body='', app_name='', app_icon='', timeout=5000, actions=[], hints=[], replaces_id=0):
@@ -55,7 +56,7 @@ class MsgBoxRunner(plasmascript.Runner):
 
 
         matches = []
-        for root, dirnames, filenames in os.walk('/home/michael/.password-store/'):
+        for root, dirnames, filenames in os.walk(PASSWORD_STORE):
             for filename in fnmatch.filter(filenames,'*.gpg'):
                 matches.append(os.path.join(root,filename))
 
@@ -67,14 +68,13 @@ class MsgBoxRunner(plasmascript.Runner):
             # only show the first 15 matches
             if limit > 15:
                 break
-            pw=str(i).replace('/home/michael/.password-store/','').replace('.gpg','')
+            pw=str(i).replace(PASSWORD_STORE,'').replace('.gpg','')
             m.setData(pw)
             m.setText("Copy password from: '%s'" % pw )
             context.addMatch(i,m)
-        
 
     def run(self, context, match):
-        # called by KRunner when the user selects our action,        
+        # called by KRunner when the user selects our action,
         # so lets keep our promise
 
         # get return code of pass (somehow check_output with pass -c kills krunner)
@@ -85,7 +85,6 @@ class MsgBoxRunner(plasmascript.Runner):
             notify(summary="pass", app_icon="dialog-information", body="Copied %s to clipboard. Will clear in 45 seconds." % str(match.data().toString()))
         else:
             notify(summary="pass", app_icon="dialog-warning",  body="gpg: decryption failed: No secret key")
-
 
 def CreateRunner(parent):
     # called by krunner, must simply return an instance of the runner object
