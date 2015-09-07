@@ -6,6 +6,21 @@ import os
 import dbus
 from subprocess import call
 
+# krunpass
+#
+# a simple plugin to retrieve password from the "pass" password store
+# http://www.passwordstore.org/
+#
+# this plugins search for *.gpg files (every file represents a password,
+# like for example google) from the pass password store, which is basically
+# a git tree defaulted to ~/.password-store/.
+# with the keyword "gp" (gp = get password) + searchstring it filters those
+# files and with hitting enter it stores the password via 
+# pass -c path/to/password/file into the clipboard.
+# (usually passwords are stored in the first line of every file)
+
+
+
 # this is the default path were pass stores it's gpg password files
 PASSWORD_STORE=os.path.expanduser("~/.password-store/")
 
