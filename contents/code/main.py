@@ -6,6 +6,7 @@ import os
 import dbus
 from subprocess import call
 
+# this is the default path were pass stores it's gpg password files
 PASSWORD_STORE=os.path.expanduser("~/.password-store/")
 
 # notify function -> this is a python/dbus notify version
@@ -54,7 +55,7 @@ class MsgBoxRunner(plasmascript.Runner):
         m.setType(Plasma.QueryMatch.ExactMatch)
         m.setIcon(KIcon("security"))
 
-
+        # matches stores every filename (ending with .gpg) found in PASSWORD_STORE
         matches = []
         for root, dirnames, filenames in os.walk(PASSWORD_STORE):
             for filename in fnmatch.filter(filenames,'*.gpg'):
